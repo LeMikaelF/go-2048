@@ -95,7 +95,7 @@ func (e *Engine) findRandomBlank() (Coord, error) {
 		return Coord{}, errors.New("no blank square found")
 	}
 
-	return allBlanks[e.random.Intn(len(allBlanks)-1)], nil
+	return allBlanks[e.random.Intn(len(allBlanks))], nil
 }
 
 func (e *Engine) slideAll(direction Direction) {

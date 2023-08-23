@@ -136,6 +136,46 @@ func Test(t *testing.T) {
 				})
 			},
 		},
+
+		{
+			name: "given a grid with only one blank square, it fills it up",
+			grid: grid.Grid{
+				[]int{2, 2, 2, 2},
+				[]int{2, 2, 2, 2},
+				[]int{2, 2, 0, 2},
+				[]int{2, 2, 2, 2},
+			},
+			randomSource: rand.NewSource(1),
+			move:         Up,
+			assertions: func(t *testing.T, actualGrid grid.Grid, err error) {
+				assertNil(t, err)
+				assertEquals(t, actualGrid, grid.Grid{
+					[]int{2, 2, 2, 2},
+					[]int{2, 2, 2, 2},
+					[]int{2, 2, 2, 2},
+					[]int{2, 2, 2, 2},
+				})
+			},
+		},
+		{
+			name: "given a full grid, it returns an error",
+			grid: grid.Grid{
+				[]int{2, 2, 2, 2},
+				[]int{2, 2, 2, 2},
+				[]int{2, 2, 2, 2},
+				[]int{2, 2, 2, 2},
+			},
+			randomSource: rand.NewSource(1),
+			move:         Up,
+			assertions: func(t *testing.T, actualGrid grid.Grid, err error) {
+				type lostError interface {
+					Lost()
+				}
+				if err, ok := err.(lostError); !ok {
+					t.Errorf("wanted error with Lost() method, was %v (type %t)", err, err)
+				}
+			},
+		},
 	}
 
 	for _, tt := range tests {
