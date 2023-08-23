@@ -4,8 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/LeMikaelF/2048/src/engine"
+	"github.com/LeMikaelF/2048/src/grid"
 )
 
 type Cli struct {
@@ -25,7 +28,7 @@ type lostError interface {
 func (c *Cli) Run() {
 	for {
 		fmt.Println("Current grid.")
-		fmt.Println(c.engine.Grid)
+		fmt.Println(prettyPrint(c.engine.Grid))
 
 		direction, err := readDirection()
 		if err != nil {
@@ -64,4 +67,19 @@ func readDirection() (engine.Direction, error) {
 			fmt.Printf("unknown input %v, try again.\n", bytes)
 		}
 	}
+}
+
+func prettyPrint(grid grid.Grid) string {
+	var sb strings.Builder
+	for iRow, row := range grid {
+		for _, val := range row {
+			sb.WriteString(strconv.Itoa(val))
+			sb.WriteString(" ")
+		}
+		if iRow != len(grid)-1 {
+			sb.WriteString("\n")
+		}
+	}
+
+	return sb.String()
 }
