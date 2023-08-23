@@ -126,6 +126,20 @@ func (e *Engine) slideAll(direction Direction) {
 				}
 			}
 		}
+	case Down:
+		for iCol := 0; iCol < len(e.Grid[0]); iCol++ {
+			//TODO start from -2 ?
+			for iRow := len(e.Grid) - 1; iRow >= 0; {
+				shouldSlide := iRow != len(e.Grid)-1 && e.Grid[iRow][iCol] != 0 && e.Grid[iRow+1][iCol] == 0
+				if shouldSlide {
+					e.Grid[iRow+1][iCol] = e.Grid[iRow][iCol]
+					e.Grid[iRow][iCol] = 0
+					iRow++
+				} else {
+					iRow--
+				}
+			}
+		}
 	default:
 		panic(fmt.Sprintf("unknown direction: %v", direction))
 	}

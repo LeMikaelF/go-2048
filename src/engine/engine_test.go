@@ -97,12 +97,32 @@ func Test(t *testing.T) {
 				})
 			},
 		},
+		{
+			name: "given a grid with one tile and one down slide, it slides the tile",
+			grid: grid.Grid{
+				[]int{0, 0, 4, 0},
+				[]int{0, 0, 0, 0},
+				[]int{0, 0, 0, 0},
+				[]int{0, 0, 0, 0},
+			},
+			randomSource: rand.NewSource(1),
+			move:         Down,
+			assertions: func(t *testing.T, actualGrid grid.Grid, err error) {
+				assertNil(t, err)
+				assertEquals(t, actualGrid, grid.Grid{
+					[]int{0, 0, 0, 0},
+					[]int{0, 0, 0, 0},
+					[]int{0, 0, 0, 0},
+					[]int{0, 2, 4, 0},
+				})
+			},
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			engine := NewFromLiteral(tt.grid, withRandomSource(tt.randomSource))
-			err := engine.Next(Right)
+			err := engine.Next(tt.move)
 
 			tt.assertions(t, engine.Grid, err)
 		})
