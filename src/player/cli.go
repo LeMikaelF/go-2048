@@ -63,6 +63,5 @@ func readDirection() (engine.Direction, error) {
 		default:
 			fmt.Printf("unknown input %v, try again.\n", bytes)
 		}
-
 	}
 }
