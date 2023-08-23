@@ -57,7 +57,6 @@ func Test(t *testing.T) {
 			},
 		},
 		{
-			//TODO test other directions
 			name: "given a grid with one tile and one left slide, it slides the tile",
 			grid: grid.Grid{
 				[]int{0, 0, 0, 0},
