@@ -2,25 +2,43 @@ package engine
 
 import (
 	"errors"
+	"math/rand"
 
 	"github.com/LeMikaelF/2048/src/grid"
 )
 
 type Engine struct {
-	Grid grid.Grid
+	Grid   grid.Grid
+	random *rand.Rand
 }
 
-func New() *Engine {
+func New(options ...EngineOption) *Engine {
 	return NewFromLiteral(grid.Grid{
 		[4]int{0, 0, 0, 0},
 		[4]int{0, 0, 0, 0},
 		[4]int{0, 0, 0, 0},
 		[4]int{0, 0, 0, 0},
-	})
+	}, options...)
 }
 
-func NewFromLiteral(theGrid grid.Grid) *Engine {
-	return &Engine{Grid: theGrid}
+func NewFromLiteral(theGrid grid.Grid, options ...EngineOption) *Engine {
+	e := &Engine{Grid: theGrid}
+
+	e.random = rand.New(rand.NewSource(int64(rand.Uint64())))
+
+	for _, option := range options {
+		option(e)
+	}
+
+	return e
+}
+
+type EngineOption func(*Engine)
+
+func withRandomSource(source rand.Source) EngineOption {
+	return func(engine *Engine) {
+		engine.random = rand.New(source)
+	}
 }
 
 type Direction string
@@ -42,8 +60,8 @@ func (l lostError) Lost() {
 	// marker method
 }
 
-func (e *Engine) Next(direction Direction) error {
-	coord, err := e.findBlank()
+func (e *Engine) Next(_ Direction) error {
+	coord, err := e.findRandomBlank()
 	if err != nil {
 		return lostError{}
 	}
@@ -58,14 +76,20 @@ type Coord struct {
 	col int
 }
 
-func (e *Engine) findBlank() (Coord, error) {
+func (e *Engine) findRandomBlank() (Coord, error) {
+	allBlanks := make([]Coord, 0)
+
 	for iRow, row := range e.Grid {
 		for iCol, num := range row {
 			if num == 0 {
-				return Coord{iRow, iCol}, nil
+				allBlanks = append(allBlanks, Coord{iRow, iCol})
 			}
 		}
 	}
 
-	return Coord{}, errors.New("no blank square found")
+	if len(allBlanks) == 0 {
+		return Coord{}, errors.New("no blank square found")
+	}
+
+	return allBlanks[e.random.Intn(len(allBlanks)-1)], nil
 }
