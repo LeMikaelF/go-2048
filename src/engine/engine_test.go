@@ -117,6 +117,26 @@ func Test(t *testing.T) {
 				})
 			},
 		},
+		{
+			name: "given a grid with one tile and one up slide, it slides the tile",
+			grid: grid.Grid{
+				[]int{0, 0, 0, 0},
+				[]int{0, 0, 0, 0},
+				[]int{0, 0, 0, 0},
+				[]int{0, 0, 0, 4},
+			},
+			randomSource: rand.NewSource(1),
+			move:         Up,
+			assertions: func(t *testing.T, actualGrid grid.Grid, err error) {
+				assertNil(t, err)
+				assertEquals(t, actualGrid, grid.Grid{
+					[]int{0, 0, 0, 4},
+					[]int{0, 0, 0, 0},
+					[]int{0, 0, 0, 0},
+					[]int{0, 0, 2, 0},
+				})
+			},
+		},
 	}
 
 	for _, tt := range tests {
