@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/LeMikaelF/2048/src/grid"
@@ -10,27 +11,29 @@ func Test(t *testing.T) {
 	type test struct {
 		name       string
 		grid       grid.Grid
+		randomSeed rand.Source
 		move       Direction
 		assertions func(t *testing.T, actualGrid grid.Grid, err error)
 	}
 	tests := []test{
 		{
-			name: "given a grid with one tile and no slides, it generates a number on an empty square",
+			name: "given a grid with one tile and no slides, it generates a number on an empty square (random seed 1)",
 			grid: grid.Grid{
 				[4]int{0, 0, 0, 0},
 				[4]int{2, 0, 0, 0},
 				[4]int{0, 0, 0, 0},
 				[4]int{0, 0, 0, 0},
 			},
-			move: Left,
+			randomSeed: rand.NewSource(1),
+			move:       Left,
 			assertions: func(t *testing.T, actualGrid grid.Grid, err error) {
 				assertNil(t, err)
-				assertTrue(t, actualGrid.Equals(grid.Grid{
+				assertEquals(t, actualGrid, grid.Grid{
 					[4]int{2, 0, 0, 0},
 					[4]int{2, 0, 0, 0},
 					[4]int{0, 0, 0, 0},
 					[4]int{0, 0, 0, 0},
-				}))
+				})
 			},
 		},
 	}
@@ -55,5 +58,16 @@ func assertTrue(t *testing.T, b bool) {
 	t.Helper()
 	if !b {
 		t.Errorf("expected true, was false")
+	}
+}
+
+type Equalable[T any] interface {
+	Equals(T) bool
+}
+
+func assertEquals[LEFT Equalable[RIGHT], RIGHT any](t *testing.T, left LEFT, right RIGHT) {
+	equals := left.Equals(right)
+	if !equals {
+		t.Errorf("wanted equality, but left was\n%v\nand right was\n%v\n", left, right)
 	}
 }
