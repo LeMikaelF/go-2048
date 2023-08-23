@@ -19,40 +19,61 @@ func Test(t *testing.T) {
 		{
 			name: "given a grid with one tile and no slides, it generates a number on an empty square (random seed 1)",
 			grid: grid.Grid{
-				[4]int{0, 0, 0, 0},
-				[4]int{2, 0, 0, 0},
-				[4]int{0, 0, 0, 0},
-				[4]int{0, 0, 0, 0},
+				[]int{0, 0, 0, 0},
+				[]int{2, 0, 0, 0},
+				[]int{0, 0, 0, 0},
+				[]int{0, 0, 0, 0},
 			},
 			randomSource: rand.NewSource(1),
 			move:         Left,
 			assertions: func(t *testing.T, actualGrid grid.Grid, err error) {
 				assertNil(t, err)
 				assertEquals(t, actualGrid, grid.Grid{
-					[4]int{0, 0, 0, 0},
-					[4]int{2, 0, 0, 0},
-					[4]int{0, 0, 0, 0},
-					[4]int{0, 0, 2, 0},
+					[]int{0, 0, 0, 0},
+					[]int{2, 0, 0, 0},
+					[]int{0, 0, 0, 0},
+					[]int{0, 0, 2, 0},
 				})
 			},
 		},
 		{
 			name: "given a grid with one tile and no slides, it generates a number on an empty square (random seed 2)",
 			grid: grid.Grid{
-				[4]int{0, 0, 0, 0},
-				[4]int{2, 0, 0, 0},
-				[4]int{0, 0, 0, 0},
-				[4]int{0, 0, 0, 0},
+				[]int{0, 0, 0, 0},
+				[]int{2, 0, 0, 0},
+				[]int{0, 0, 0, 0},
+				[]int{0, 0, 0, 0},
 			},
 			randomSource: rand.NewSource(2),
 			move:         Left,
 			assertions: func(t *testing.T, actualGrid grid.Grid, err error) {
 				assertNil(t, err)
 				assertEquals(t, actualGrid, grid.Grid{
-					[4]int{0, 0, 0, 0},
-					[4]int{2, 2, 0, 0},
-					[4]int{0, 0, 0, 0},
-					[4]int{0, 0, 0, 0},
+					[]int{0, 0, 0, 0},
+					[]int{2, 2, 0, 0},
+					[]int{0, 0, 0, 0},
+					[]int{0, 0, 0, 0},
+				})
+			},
+		},
+		{
+			//TODO test other directions
+			name: "given a grid with one tile and one left slide, it slides the tile",
+			grid: grid.Grid{
+				[]int{0, 0, 0, 0},
+				[]int{0, 0, 0, 2},
+				[]int{0, 0, 0, 0},
+				[]int{0, 0, 0, 0},
+			},
+			randomSource: rand.NewSource(1),
+			move:         Left,
+			assertions: func(t *testing.T, actualGrid grid.Grid, err error) {
+				assertNil(t, err)
+				assertEquals(t, actualGrid, grid.Grid{
+					[]int{0, 0, 0, 0},
+					[]int{2, 0, 0, 0},
+					[]int{0, 0, 0, 0},
+					[]int{0, 0, 2, 0},
 				})
 			},
 		},

@@ -14,10 +14,10 @@ type Engine struct {
 
 func New(options ...EngineOption) *Engine {
 	return NewFromLiteral(grid.Grid{
-		[4]int{0, 0, 0, 0},
-		[4]int{0, 0, 0, 0},
-		[4]int{0, 0, 0, 0},
-		[4]int{0, 0, 0, 0},
+		[]int{0, 0, 0, 0},
+		[]int{0, 0, 0, 0},
+		[]int{0, 0, 0, 0},
+		[]int{0, 0, 0, 0},
 	}, options...)
 }
 
@@ -60,7 +60,10 @@ func (l lostError) Lost() {
 	// marker method
 }
 
-func (e *Engine) Next(_ Direction) error {
+func (e *Engine) Next(direction Direction) error {
+	//TODO slide everything
+	e.slideAll(direction)
+
 	coord, err := e.findRandomBlank()
 	if err != nil {
 		return lostError{}
@@ -80,8 +83,8 @@ func (e *Engine) findRandomBlank() (Coord, error) {
 	allBlanks := make([]Coord, 0)
 
 	for iRow, row := range e.Grid {
-		for iCol, num := range row {
-			if num == 0 {
+		for iCol, val := range row {
+			if val == 0 {
 				allBlanks = append(allBlanks, Coord{iRow, iCol})
 			}
 		}
@@ -92,4 +95,31 @@ func (e *Engine) findRandomBlank() (Coord, error) {
 	}
 
 	return allBlanks[e.random.Intn(len(allBlanks)-1)], nil
+}
+
+func (e *Engine) slideAll(direction Direction) {
+	//directionToSlideCoords := map[Direction]Coord{
+	//Up:    Coord{-1, 0},
+	//Down:  Coord{1, 0},
+	//Left:  Coord{0, -1},
+	//Right: Coord{0, 1},
+	//}
+	//
+	//slideCoords, ok := directionToSlideCoords[direction]
+	//if !ok {
+	//	panic(fmt.Sprintf("unknown direction: %v", direction))
+	//}
+
+	for _, row := range e.Grid {
+		for iCol := 0; iCol < len(row); {
+			canSlide := iCol != 0 && row[iCol-1] == 0 && row[iCol] != 0
+			if canSlide {
+				row[iCol-1] = row[iCol]
+				row[iCol] = 0
+				iCol--
+			} else {
+				iCol++
+			}
+		}
+	}
 }
