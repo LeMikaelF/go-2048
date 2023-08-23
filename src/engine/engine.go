@@ -2,6 +2,7 @@ package engine
 
 import (
 	"errors"
+	"fmt"
 	"math/rand"
 
 	"github.com/LeMikaelF/2048/src/grid"
@@ -98,28 +99,34 @@ func (e *Engine) findRandomBlank() (Coord, error) {
 }
 
 func (e *Engine) slideAll(direction Direction) {
-	//directionToSlideCoords := map[Direction]Coord{
-	//Up:    Coord{-1, 0},
-	//Down:  Coord{1, 0},
-	//Left:  Coord{0, -1},
-	//Right: Coord{0, 1},
-	//}
-	//
-	//slideCoords, ok := directionToSlideCoords[direction]
-	//if !ok {
-	//	panic(fmt.Sprintf("unknown direction: %v", direction))
-	//}
-
-	for _, row := range e.Grid {
-		for iCol := 0; iCol < len(row); {
-			canSlide := iCol != 0 && row[iCol-1] == 0 && row[iCol] != 0
-			if canSlide {
-				row[iCol-1] = row[iCol]
-				row[iCol] = 0
-				iCol--
-			} else {
-				iCol++
+	switch direction {
+	case Left:
+		for _, row := range e.Grid {
+			for iCol := 0; iCol < len(row); {
+				shouldSlide := iCol != 0 && row[iCol-1] == 0 && row[iCol] != 0
+				if shouldSlide {
+					row[iCol-1] = row[iCol]
+					row[iCol] = 0
+					iCol--
+				} else {
+					iCol++
+				}
 			}
 		}
+	case Right:
+		for _, row := range e.Grid {
+			for iCol := len(row) - 1; iCol >= 0; {
+				shouldSlide := iCol != len(row)-1 && row[iCol+1] == 0 && row[iCol] != 0
+				if shouldSlide {
+					row[iCol+1] = row[iCol]
+					row[iCol] = 0
+					iCol++
+				} else {
+					iCol--
+				}
+			}
+		}
+	default:
+		panic(fmt.Sprintf("unknown direction: %v", direction))
 	}
 }
